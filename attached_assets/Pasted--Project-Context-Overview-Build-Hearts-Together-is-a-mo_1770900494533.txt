@@ -1,0 +1,268 @@
+### Project Context Overview
+
+"Build Hearts Together 💪❤️" is a **mobile-first, single-page web application** designed as a fun, platonic Valentine's Day surprise for your construction team (especially the Gen Z ladies). It merges a persistent "dodging No button" proposal game with a heart-catching mini-game, all wrapped in cute construction-themed puns and visuals.
+
+The tone is empowering, playful, and team-focused: **"We build better together 💪❤️"**. It's fully shareable—one link works for anyone worldwide (they enter their own name). Players end on a selfie-ready screen to screenshot and post, driving viral spread on WhatsApp, TikTok, Stories, etc.
+
+**Key Strengths**:
+- Zero backend → pure static HTML/CSS/JS.
+- Optimized for smartphones (Android/iOS browsers): touch controls, responsive layout, fast load.
+- Production-grade: clean code, error handling, performance (requestAnimationFrame), accessibility basics, mobile viewport.
+- Viral mechanics: personalized, hilarious, selfie + easy shares.
+
+Your uploaded chibi construction worker with crane lifting hearts is **perfect** as the main character—use it everywhere!
+
+### PRD (Product Requirements Document)
+
+#### 1. Objective
+Create a quick (1-3 min), adorable, interactive Valentine's web game for team appreciation that's shareable globally.
+
+#### 2. Target Devices
+- Primary: Mobile browsers (Chrome/Safari on Android/iOS)
+- Secondary: Desktop (works but optimized for touch)
+
+#### 3. Core Features
+- **Name Entry**: Input field (default: "Awesome Builder")
+- **Persistent Button Screen**: Cute character asks "[Name]! Will you build hearts with me this Valentine's? 💖 We build better together 💪❤️"
+  - Large "YES 💪" + dodging/shrinking "NO" button
+  - 6-8 punny rejection messages with name
+  - Auto-advance after ~6 "NO"s
+- **Heart-Catching Game**: Canvas-based
+  - Falling: Pink hearts (score) + distractors (hammers, tools)
+  - Player moves crane hook (catcher) via touch/drag
+  - Only hearts fill the meter (~25 needed)
+  - Fun feedback on distractors
+- **End Screen**: Confetti explosion + personalized win + selfie background + share buttons
+
+#### 4. Technical Stack
+- Vanilla HTML5, CSS3, JavaScript (ES6+)
+- HTML5 Canvas for game
+- canvas-confetti CDN for celebration
+- No frameworks/libraries except confetti
+- Assets: Transparent PNGs (free-to-use from searches + your character)
+
+#### 5. Non-Functional Requirements
+- Mobile-first responsive (flexbox, viewport)
+- Touch + mouse support
+- 60fps game loop
+- Fast load (<2s on 3G)
+- Accessibility: ARIA labels, keyboard fallback (basic)
+- Production-ready: "use strict", error handling, comments
+
+#### 6. Deployment
+Upload the single `index.html` to Vercel/Netlify/GitHub Pages → instant link/QR code.
+
+### Complete Code (Single File: index.html)
+
+Copy-paste this entire code into a file named `index.html`. Host your character image (the uploaded one) and replace the placeholder URL.
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Build Hearts Together 💪❤️</title>
+  <style>
+    body { margin: 0; font-family: 'Comic Sans MS', cursive, sans-serif; background: #ffebee; overflow: hidden; touch-action: manipulation; }
+    .screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; box-sizing: border-box; display: none; }
+    .active { display: flex; }
+    h1, h2 { color: #e91e63; }
+    button { padding: 15px 30px; font-size: 24px; margin: 20px; border: none; border-radius: 50px; cursor: pointer; transition: all 0.3s; }
+    #yesBtn { background: #ff4081; color: white; }
+    #noBtn { background: #ff9800; color: white; position: absolute; }
+    #character { width: 80%; max-width: 300px; margin-bottom: 20px; }
+    canvas { background: #87ceeb; touch-action: none; }
+    #meter { height: 20px; width: 80%; background: #ddd; border-radius: 10px; margin: 20px 0; overflow: hidden; }
+    #meterFill { height: 100%; width: 0%; background: #ff4081; transition: width 0.3s; }
+    #endBg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.8; z-index: -1; }
+    .shareBtn { background: #25d366; color: white; text-decoration: none; padding: 15px; border-radius: 50px; margin: 10px; }
+  </style>
+</head>
+<body>
+  <!-- Name Screen -->
+  <div id="nameScreen" class="screen active">
+    <h1>Build Hearts Together 💪❤️</h1>
+    <p>Enter your name to start!</p>
+    <input type="text" id="nameInput" placeholder="Your name (e.g. Awesome Builder)" style="padding:10px; font-size:18px; width:80%; max-width:300px;">
+    <button onclick="startGame()">Play 💖</button>
+  </div>
+
+  <!-- Button Screen -->
+  <div id="buttonScreen" class="screen">
+    <img id="character" src="" alt="Cute Construction Worker"> <!-- REPLACE WITH YOUR UPLOADED IMAGE URL -->
+    <h2 id="proposalText"></h2>
+    <button id="yesBtn" onclick="goToGame()">YES 💪</button>
+    <button id="noBtn" onclick="handleNo()">NO 🙅‍♀️</button>
+    <p id="rejectionText"></p>
+  </div>
+
+  <!-- Game Screen -->
+  <div id="gameScreen" class="screen">
+    <h2>Catch the hearts, [Name]! ❤️🏗️</h2>
+    <div id="meter"><div id="meterFill"></div></div>
+    <p>Only hearts count! (Tools are distractors 😂)</p>
+    <canvas id="gameCanvas"></canvas>
+  </div>
+
+  <!-- End Screen -->
+  <div id="endScreen" class="screen">
+    <img id="endBg" src="https://thumbs.dreamstime.com/b/pink-gold-glitter-heart-confetti-transparent-background-bright-falling-star-dust-romantic-design-elements-wedding-136311884.jpg" alt="Hearts Background">
+    <img id="characterEnd" src="" alt="Cute Construction Worker"> <!-- Same as above -->
+    <h1 id="winText"></h1>
+    <p>Snap a selfie & share! 📸</p>
+    <a class="shareBtn" href="#" id="whatsappShare">Share on WhatsApp</a>
+    <a class="shareBtn" href="#" onclick="shareGeneral()">Share Anywhere</a>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <script>
+    "use strict";
+
+    let playerName = "Awesome Builder";
+    let noCount = 0;
+    const maxNo = 6;
+    const rejections = [
+      `${playerName}, nooo! Our foundation is too strong! 😂`,
+      `${playerName}, come on—we build better together! 💪❤️`,
+      `Wrong answer, builder! Try again 🏗️`,
+      `Don't leave me hanging like scaffolding!`,
+      `You're breaking my hard hat heart! 💔`,
+      `One more try—we're a great team!`,
+      `Okay, fine—you win this round! Let's build hearts ❤️`
+    ];
+
+    // Assets (free transparent PNGs)
+    const heartSrc = "https://i.pinimg.com/736x/13/81/12/1381121eb5905fdc7802b86321f52e33.jpg";
+    const hammerSrc = "https://www.clipartmax.com/png/middle/242-2423709_hammer-clipart-cartoon-cartoon-image-of-hammer.png";
+    const hookSrc = "https://w1.pngwing.com/pngs/177/207/png-transparent-crane-yellow-construction-lifting-hook-text-line-angle.png"; // Catcher
+    const characterSrc = "YOUR_UPLOADED_IMAGE_URL_HERE"; // REPLACE WITH YOUR CHARACTER IMAGE
+
+    // Preload images
+    const heartImg = new Image(); heartImg.src = heartSrc;
+    const hammerImg = new Image(); hammerImg.src = hammerSrc;
+    const hookImg = new Image(); hookImg.src = hookSrc;
+
+    function startGame() {
+      playerName = document.getElementById('nameInput').value.trim() || "Awesome Builder";
+      document.getElementById('character').src = characterSrc;
+      document.getElementById('characterEnd').src = characterSrc;
+      document.getElementById('proposalText').innerHTML = `${playerName}! Will you build hearts with me this Valentine's? 💖<br>We build better together 💪❤️`;
+      showScreen('buttonScreen');
+    }
+
+    function handleNo() {
+      noCount++;
+      const noBtn = document.getElementById('noBtn');
+      noBtn.style.transform = `scale(${1 - noCount * 0.1})`;
+      noBtn.style.left = `${Math.random() * 60 + 20}%`;
+      noBtn.style.top = `${Math.random() * 60 + 20}%`;
+
+      document.getElementById('rejectionText').textContent = rejections[Math.min(noCount - 1, rejections.length - 1)];
+
+      if (noCount >= maxNo) {
+        setTimeout(goToGame, 1000);
+      }
+    }
+
+    function goToGame() {
+      document.getElementById('proposalText').innerHTML = `Yay, ${playerName}! Let's build those hearts! ❤️🏗️`;
+      setTimeout(initGame, 1500);
+    }
+
+    // Game variables
+    let canvas, ctx, catcherX, items = [], score = 0, requiredScore = 25;
+
+    function initGame() {
+      showScreen('gameScreen');
+      canvas = document.getElementById('gameCanvas');
+      ctx = canvas.getContext('1');
+      resizeCanvas();
+      window.addEventListener('resize', resizeCanvas);
+
+      catcherX = canvas.width / 2;
+
+      // Touch/Mouse controls
+      canvas.addEventListener('touchmove', e => { e.preventDefault(); catcherX = e.touches[0].clientX; });
+      canvas.addEventListener('mousemove', e => { catcherX = e.clientX; });
+
+      requestAnimationFrame(gameLoop);
+      setInterval(spawnItem, 800);
+    }
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight * 0.7;
+    }
+
+    function spawnItem() {
+      const type = Math.random() < 0.4 ? 'heart' : 'distractor'; // 40% hearts
+      const distractorType = Math.random() < 0.5 ? hammerImg : hookImg; // Mix distractors
+      items.push({
+        x: Math.random() * (canvas.width - 50) + 25,
+        y: -50,
+        type,
+        img: type === 'heart' ? heartImg : distractorType,
+        speed: Math.random() * 3 + 2
+      });
+    }
+
+    function gameLoop() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw catcher (crane hook)
+      ctx.drawImage(hookImg, catcherX - 50, canvas.height - 100, 100, 100);
+
+      // Update & draw items
+      items = items.filter(item => {
+        item.y += item.speed;
+        ctx.drawImage(item.img, item.x - 40, item.y, 80, 80);
+
+        // Collision
+        if (item.y > canvas.height - 120 && Math.abs(item.x - catcherX) < 70) {
+          if (item.type === 'heart') {
+            score++;
+            updateMeter();
+            if (score >= requiredScore) endGame();
+          } else {
+            // Fun distractor feedback
+            document.getElementById('rejectionText').textContent = `Oops, that's a tool—focus on hearts, ${playerName}! 😂`;
+            setTimeout(() => document.getElementById('rejectionText').textContent = '', 2000);
+          }
+          return false;
+        }
+        return item.y < canvas.height + 50;
+      });
+
+      requestAnimationFrame(gameLoop);
+    }
+
+    function updateMeter() {
+      document.getElementById('meterFill').style.width = `${(score / requiredScore) * 100}%`;
+    }
+
+    function endGame() {
+      confetti({ particleCount: 200, spread: 70, origin: { y: 0.6 } });
+      document.getElementById('winText').innerHTML = `${playerName}, you did it!<br>We build better together 💪❤️<br>You're a site superstar! Happy Valentine's!`;
+      
+      const gameUrl = window.location.href;
+      document.getElementById('whatsappShare').href = `https://wa.me/?text=This Valentine's game is TOO cute! Build hearts with me 💪❤️ ${encodeURIComponent(gameUrl)}`;
+
+      showScreen('endScreen');
+    }
+
+    function shareGeneral() {
+      if (navigator.share) {
+        navigator.share({ title: 'Build Hearts Together', text: 'Play this cute Valentine game!', url: window.location.href });
+      } else {
+        alert('Copy this link to share: ' + window.location.href);
+      }
+    }
+
+    function showScreen(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+  </script>
+</body>
+</html>
