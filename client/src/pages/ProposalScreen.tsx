@@ -42,43 +42,55 @@ export default function ProposalScreen({ playerName, onAccept }: ProposalScreenP
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 overflow-hidden" ref={containerRef}>
+    <div className="min-h-screen flex items-center justify-center p-4 overflow-hidden relative" ref={containerRef}>
+      {/* Chaos Background Elements */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-10 left-10 w-64 h-64 bg-primary/20 rounded-full blur-3xl animate-pulse-fast text-glow"></div>
+        <div className="absolute bottom-10 right-10 w-96 h-96 bg-secondary/20 rounded-full blur-3xl animate-float"></div>
+      </div>
+
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-2xl text-center z-10"
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="w-full max-w-4xl text-center z-10"
       >
-        <Card className="p-8 border-4 border-secondary/20 bg-white/90 backdrop-blur-md shadow-2xl rounded-3xl">
+        <div className="glass-panel p-12 md:p-16 rounded-[2rem] shadow-[0_0_50px_rgba(255,0,255,0.3)] border border-white/10 relative overflow-hidden group hover:shadow-[0_0_80px_rgba(0,255,255,0.4)] transition-shadow duration-500">
+
+          <motion.div
+            className="absolute inset-0 bg-gradient-to-br from-primary/5 to-secondary/5 opacity-50"
+            animate={{ backgroundPosition: ["0% 0%", "100% 100%"] }}
+            transition={{ duration: 10, repeat: Infinity, repeatType: "mirror" }}
+          />
+
           <motion.img
             src={workerImg}
             alt="Worker asking"
-            className="w-40 h-40 mx-auto mb-6 object-contain"
+            className="w-48 h-48 mx-auto mb-8 object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.5)]"
             animate={{
-              rotate: [0, 5, 0, -5, 0],
-              scale: [1, 1.05, 1]
+              y: [0, -20, 0],
+              rotate: [0, 5, -5, 0],
             }}
-            transition={{ repeat: Infinity, duration: 4 }}
+            transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
           />
 
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8 leading-relaxed">
-            <span className="text-primary">{playerName}!</span> Will you be my work Valentine? 💖
-            <br />
-            <span className="text-xl md:text-2xl text-muted-foreground block mt-2 font-body">
-              We build better together 💪❤️
+          <h2 className="text-5xl md:text-7xl font-bold mb-12 leading-tight tracking-tighter mix-blend-screen">
+            <span className="text-primary block mb-2 text-glow">{playerName}</span>
+            <span className="text-white">BE MY VALENTINE?</span>
+            <span className="text-2xl md:text-3xl text-secondary block mt-6 font-body tracking-normal uppercase letter-spacing-2">
+              ⚠️ Construction of Love in Progress ⚠️
             </span>
           </h2>
 
-          <div className="relative h-32 flex items-center justify-center gap-8">
+          <div className="relative h-40 flex items-center justify-center gap-12">
             <motion.div
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.15, rotate: -2 }}
+              whileTap={{ scale: 0.9 }}
             >
               <PlayfulButton
                 onClick={onAccept}
-                size="lg"
-                className="min-w-[140px] text-2xl"
+                className="text-3xl px-12 py-8 bg-gradient-to-r from-primary to-purple-600 hover:from-primary/80 hover:to-purple-500 border-none shadow-[0_0_30px_rgba(255,0,255,0.6)] animate-pulse-fast"
               >
-                YES 💪
+                YES <span className="text-4xl ml-2">🔥</span>
               </PlayfulButton>
             </motion.div>
 
@@ -87,39 +99,41 @@ export default function ProposalScreen({ playerName, onAccept }: ProposalScreenP
                 animate={{
                   x: noPosition.x,
                   y: noPosition.y,
-                  scale: Math.max(0.5, 1 - noCount * 0.1) // Shrink with each click
+                  rotate: noCount * 15,
+                  opacity: Math.max(0, 1 - noCount * 0.15)
                 }}
-                transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                transition={{ type: "spring", stiffness: 400, damping: 15 }}
                 className="absolute"
-                style={{ left: "50%", marginLeft: "20px" }} // Initial offset to right of YES button
+                style={{ left: "60%" }}
               >
-                <PlayfulButton
-                  variant="secondary"
-                  size="lg"
-                  className="min-w-[140px]"
-                  onMouseEnter={handleNoInteraction}
-                  onClick={handleNoInteraction} // For touch devices
-                >
-                  NO 🙅‍♀️
-                </PlayfulButton>
+                {noCount < 6 && (
+                  <PlayfulButton
+                    variant="secondary"
+                    className="text-xl px-8 py-4 bg-muted/20 hover:bg-muted/40 text-muted-foreground border border-white/5 backdrop-blur-sm shadow-none"
+                    onMouseEnter={handleNoInteraction}
+                    onClick={handleNoInteraction}
+                  >
+                    NO <span className="text-2xl ml-2">💀</span>
+                  </PlayfulButton>
+                )}
               </motion.div>
             </AnimatePresence>
           </div>
 
           <AnimatePresence mode="wait">
             {noCount > 0 && (
-              <motion.p
+              <motion.div
                 key={noCount}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                className="mt-6 text-xl font-bold text-secondary"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                className="mt-8 text-2xl font-bold text-accent font-display uppercase tracking-widest text-glow"
               >
                 {REJECTIONS[(noCount - 1) % REJECTIONS.length]}
-              </motion.p>
+              </motion.div>
             )}
           </AnimatePresence>
-        </Card>
+        </div>
       </motion.div>
     </div>
   );

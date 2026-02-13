@@ -1,60 +1,74 @@
-@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Patrick+Hand&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  /* Playful Valentine Construction Palette */
-  --font-display: 'Fredoka', sans-serif;
-  --font-body: 'Patrick Hand', cursive;
+  /* Gen Z / Futuristic Palette */
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body: 'Outfit', sans-serif;
 
-  /* Hot Pink */
-  --primary: 340 82% 52%;
+  /* Neon Magenta */
+  --primary: 300 100% 50%;
   --primary-foreground: 0 0% 100%;
 
-  /* Construction Yellow/Orange */
-  --secondary: 36 100% 50%;
-  --secondary-foreground: 0 0% 100%;
+  /* Acid Lime */
+  --secondary: 75 100% 60%;
+  --secondary-foreground: 0 0% 0%;
 
-  /* Soft Pink Background */
-  --background: 340 100% 97%;
-  --foreground: 340 40% 20%;
+  /* Deep Void Black */
+  --background: 0 0% 1%;
+  --foreground: 0 0% 95%;
 
-  /* Cards and Surfaces */
-  --card: 0 0% 100%;
-  --card-foreground: 340 40% 20%;
+  /* Glass / Surfaces */
+  --card: 0 0% 5%;
+  --card-foreground: 0 0% 95%;
   
-  --popover: 0 0% 100%;
-  --popover-foreground: 340 40% 20%;
+  --popover: 0 0% 5%;
+  --popover-foreground: 0 0% 95%;
 
-  --muted: 340 20% 90%;
-  --muted-foreground: 340 40% 50%;
+  --muted: 0 0% 15%;
+  --muted-foreground: 0 0% 60%;
 
-  --accent: 36 100% 65%; /* lighter yellow */
-  --accent-foreground: 340 40% 20%;
+  /* Cyan Accent */
+  --accent: 180 100% 50%;
+  --accent-foreground: 0 0% 0%;
 
-  --destructive: 0 84% 60%;
-  --destructive-foreground: 0 0% 98%;
+  --destructive: 0 100% 60%;
+  --destructive-foreground: 0 0% 100%;
 
-  --border: 340 30% 90%;
-  --input: 340 30% 90%;
-  --ring: 340 82% 52%;
+  --border: 0 0% 20%;
+  --input: 0 0% 20%;
+  --ring: 300 100% 50%;
 
-  --radius: 1rem;
+  --radius: 0.5rem;
 }
 
 @layer base {
   body {
-    @apply bg-background text-foreground antialiased selection:bg-secondary selection:text-white overflow-x-hidden;
+    @apply bg-background text-foreground antialiased selection:bg-primary selection:text-white overflow-x-hidden;
     font-family: var(--font-body);
     background-image: 
-      radial-gradient(circle at 10% 20%, rgba(255, 64, 129, 0.1) 0%, transparent 20%),
-      radial-gradient(circle at 90% 80%, rgba(255, 152, 0, 0.1) 0%, transparent 20%);
+      radial-gradient(circle at 15% 50%, rgba(255, 0, 255, 0.15) 0%, transparent 25%),
+      radial-gradient(circle at 85% 30%, rgba(0, 255, 255, 0.15) 0%, transparent 25%);
+    background-attachment: fixed;
   }
 
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-display);
+    @apply tracking-tight;
+  }
+}
+
+/* Custom Utilities */
+@layer utilities {
+  .text-glow {
+    text-shadow: 0 0 10px rgba(255, 0, 255, 0.5), 0 0 20px rgba(255, 0, 255, 0.3);
+  }
+  
+  .glass-panel {
+    @apply bg-black/40 backdrop-blur-md border border-white/10;
   }
 }
 
