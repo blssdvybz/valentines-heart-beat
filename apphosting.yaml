@@ -1,0 +1,7 @@
+runConfig:
+  runCommand: npm start
+  environmentVariables:
+    - variable: PORT
+      value: 8080
+    - variable: NODE_ENV
+      value: production
