@@ -314,7 +314,7 @@ export default function EndScreen({ playerName }: EndScreenProps) {
 
               <p className="text-xl md:text-2xl font-body text-muted-foreground mb-10 leading-relaxed">
                 <span className="font-bold text-primary block text-3xl mb-2">{playerName}</span>
-                you secured the bag (my heart) 💖💪
+                Nkwagala nyo, Enjoy your day! 💖💪
               </p>
 
               <div className="space-y-4">
@@ -434,9 +434,6 @@ export default function EndScreen({ playerName }: EndScreenProps) {
                 </PlayfulButton>
 
                 <div className="flex gap-4">
-                  <PlayfulButton onClick={retakePhoto} variant="secondary" className="flex-1 flex gap-2 items-center justify-center text-sm bg-white/5 border-white/10 text-white hover:bg-white/10">
-                    <RefreshCw size={16} /> RETAKE
-                  </PlayfulButton>
                   <PlayfulButton onClick={handleNativeShare} variant="secondary" className="flex-1 flex gap-2 items-center justify-center text-sm bg-white/5 border-white/10 text-white hover:bg-white/10">
                     <Share2 size={16} /> POST
                   </PlayfulButton>
