@@ -225,78 +225,83 @@ export default function EndScreen({ playerName }: EndScreenProps) {
   };
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center p-4 bg-cover bg-center overflow-hidden"
-      style={{ backgroundImage: `url(${BG_URL})` }}
-    >
-      <div className="absolute inset-0 bg-white/40 backdrop-blur-[2px]" />
+
+    <div className="min-h-screen flex items-center justify-center p-4 overflow-hidden relative">
+
+      {/* Dynamic Background Effects */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_50%,rgba(255,0,255,0.1),transparent_70%)] animate-pulse-fast"></div>
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-accent/10 rounded-full blur-[100px] animate-float"></div>
+      </div>
 
       <AnimatePresence mode="wait">
         {!isCameraOpen && !capturedImage && (
           <motion.div
             key="celebration"
-            initial={{ scale: 0.5, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.8, opacity: 0 }}
-            transition={{ type: "spring", bounce: 0.6 }}
-            className="w-full max-w-md z-10"
+            initial={{ scale: 0.8, opacity: 0, rotate: -5 }}
+            animate={{ scale: 1, opacity: 1, rotate: 0 }}
+            exit={{ scale: 0.8, opacity: 0, rotate: 5 }}
+            transition={{ type: "spring", bounce: 0.5 }}
+            className="w-full max-w-lg z-10"
           >
-            <Card className="p-8 border-4 border-primary bg-white/95 shadow-2xl rounded-3xl text-center">
+            <div className="glass-panel p-10 md:p-12 rounded-[2.5rem] shadow-[0_0_60px_rgba(255,0,255,0.4)] border border-white/20 text-center relative overflow-hidden">
+              <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary via-secondary to-accent animate-gradient-x"></div>
+
               <motion.div
                 animate={{
                   y: [0, -20, 0],
                   rotate: [0, 5, -5, 0]
                 }}
-                transition={{ repeat: Infinity, duration: 3 }}
+                transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+                className="mb-8"
               >
                 <img
                   src={workerImg}
                   alt="Winner Worker"
-                  className="w-48 h-48 mx-auto -mt-24 mb-6 object-contain drop-shadow-2xl"
+                  className="w-56 h-56 mx-auto -mt-32 object-contain drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]"
                 />
               </motion.div>
 
-              <h2 className="text-4xl md:text-5xl font-bold text-primary mb-4 leading-tight">
-                You did it! 🎉 Nkwagala Nyo!
+              <h2 className="text-5xl md:text-7xl font-bold bg-clip-text text-transparent bg-gradient-to-br from-white to-white/70 mb-4 leading-none tracking-tighter text-glow drop-shadow-lg">
+                MISSION COMPLETE
               </h2>
+              <p className="text-2xl font-bold text-secondary mb-8 font-display tracking-widest uppercase">
+                VIBE CHECK PASSED ✅
+              </p>
 
-              <p className="text-2xl font-body text-foreground mb-8">
-                <span className="font-bold text-secondary">{playerName}</span>,<br />
-                we build better together! 💪❤️
+              <p className="text-xl md:text-2xl font-body text-muted-foreground mb-10 leading-relaxed">
+                <span className="font-bold text-primary block text-3xl mb-2">{playerName}</span>
+                you secured the bag (my heart) 💖💪
               </p>
 
               <div className="space-y-4">
                 <PlayfulButton
                   onClick={startCamera}
                   variant="primary"
-                  className="w-full flex items-center justify-center gap-2 shadow-lg"
+                  className="w-full flex items-center justify-center gap-3 shadow-[0_0_20px_rgba(255,0,255,0.5)] hover:shadow-[0_0_40px_rgba(255,0,255,0.7)] text-xl py-6"
                 >
-                  <Camera size={24} />
-                  Take a Victory Selfie! 📸
+                  <Camera size={28} />
+                  VICTORY SELFIE 📸
                 </PlayfulButton>
 
                 <PlayfulButton
                   onClick={handleWhatsAppShare}
-                  className="w-full bg-[#25D366] hover:bg-[#128C7E] border-[#075E54] text-white flex items-center justify-center gap-2"
+                  className="w-full bg-[#25D366]/20 hover:bg-[#25D366]/40 text-[#25D366] border border-[#25D366]/50 flex items-center justify-center gap-2 backdrop-blur-sm"
                 >
-                  Share on WhatsApp 💬
+                  WhatsApp 💬
                 </PlayfulButton>
 
                 <PlayfulButton
                   onClick={handleNativeShare}
                   variant="secondary"
-                  className="w-full flex items-center justify-center gap-2"
+                  className="w-full flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border-white/10 text-white"
                 >
                   <Share2 size={20} />
-                  Share Anywhere
+                  Share Vibes
                 </PlayfulButton>
 
               </div>
-
-              <p className="mt-6 text-sm text-muted-foreground">
-                Happy Valentine's Day, My Darling! 💝
-              </p>
-            </Card>
+            </div>
           </motion.div>
         )}
 
@@ -306,23 +311,31 @@ export default function EndScreen({ playerName }: EndScreenProps) {
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 50 }}
-            className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/90 p-4"
+            className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/95 p-4 backdrop-blur-xl"
           >
-            <div className="relative w-full max-w-md aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl border-4 border-primary">
-              {/* Live Filter Overlay Effect via CSS */}
-              <div className="absolute inset-0 pointer-events-none z-10 opacity-20 bg-pink-500 mix-blend-overlay"></div>
+            <div className="relative w-full max-w-md aspect-[9/16] rounded-3xl overflow-hidden shadow-[0_0_50px_rgba(255,0,255,0.3)] border-4 border-primary/50">
+              {/* Camera UI Overlay */}
+              <div className="absolute inset-0 pointer-events-none z-10 flex flex-col justify-between p-6">
+                <div className="flex justify-between items-start">
+                  <div className="bg-black/50 px-3 py-1 rounded-full text-white text-xs font-mono border border-white/20">REC ●</div>
+                  <div className="text-white/80 text-xs font-mono">{new Date().toLocaleTimeString()}</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-white/50 text-xs font-mono mb-2">FILTER: LOVE_CORE.EXE</div>
+                </div>
+              </div>
 
               {/* Floating Hearts Decoration */}
               <motion.div
-                animate={{ y: [0, -20, 0], opacity: [0.5, 1, 0.5] }}
-                transition={{ repeat: Infinity, duration: 2 }}
-                className="absolute top-4 left-4 text-4xl z-20"
+                animate={{ y: [0, -50, 0], opacity: [0, 1, 0], scale: [0.5, 1.5, 0.5] }}
+                transition={{ repeat: Infinity, duration: 4 }}
+                className="absolute top-1/4 left-1/4 text-6xl z-20 mix-blend-screen pointer-events-none"
               >💖</motion.div>
               <motion.div
-                animate={{ y: [0, -30, 0], opacity: [0.5, 1, 0.5] }}
-                transition={{ repeat: Infinity, duration: 2.5, delay: 0.5 }}
-                className="absolute top-4 right-4 text-4xl z-20"
-              >💖</motion.div>
+                animate={{ y: [0, -80, 0], opacity: [0, 1, 0], scale: [0.5, 1.2, 0.5] }}
+                transition={{ repeat: Infinity, duration: 5, delay: 1 }}
+                className="absolute bottom-1/3 right-1/4 text-5xl z-20 mix-blend-screen pointer-events-none"
+              >✨</motion.div>
 
               <video
                 ref={videoRef}
@@ -330,67 +343,70 @@ export default function EndScreen({ playerName }: EndScreenProps) {
                 playsInline
                 muted
                 className="w-full h-full object-cover transform scale-x-[-1]" // Mirror effect
-                style={{ filter: "contrast(1.1) saturate(1.2) sepia(0.2)" }}
+                style={{ filter: "contrast(1.2) saturate(1.3) hue-rotate(-10deg)" }}
               />
 
               <canvas ref={canvasRef} className="hidden" />
 
               <button
                 onClick={stopCamera}
-                className="absolute top-4 right-4 bg-white/20 p-2 rounded-full text-white backdrop-blur-sm z-30"
+                className="absolute top-4 right-4 bg-black/50 p-3 rounded-full text-white backdrop-blur-md z-30 hover:bg-black/70 transition-colors border border-white/20"
               >
                 <X size={24} />
               </button>
 
-              <div className="absolute bottom-8 left-0 right-0 flex justify-center z-30">
+              <div className="absolute bottom-10 left-0 right-0 flex justify-center z-30 pointer-events-auto">
                 <PlayfulButton
                   onClick={capturePhoto}
                   size="lg"
-                  className="rounded-full w-20 h-20 p-0 flex items-center justify-center bg-white border-4 border-primary/50"
+                  className="rounded-full w-24 h-24 p-0 flex items-center justify-center bg-white/10 border-4 border-white/80 backdrop-blur-sm active:scale-90 transition-transform"
                 >
-                  <div className="w-16 h-16 bg-primary rounded-full border-2 border-white" />
+                  <div className="w-20 h-20 bg-primary rounded-full border-4 border-white shadow-[0_0_20px_rgba(255,0,255,0.8)]" />
                 </PlayfulButton>
               </div>
             </div>
-            <p className="text-white mt-4 font-bold text-lg animate-bounce">Strike a pose! ✨</p>
+            <p className="text-white mt-6 font-bold text-2xl animate-pulse font-display tracking-widest text-glow">POV: YOU WON 🏆</p>
           </motion.div>
         )}
 
         {capturedImage && (
           <motion.div
             key="preview"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
+            initial={{ opacity: 0, scale: 0.9, rotate: 2 }}
+            animate={{ opacity: 1, scale: 1, rotate: 0 }}
             exit={{ opacity: 0, scale: 0.9 }}
             className="w-full max-w-md z-10"
           >
-            <Card className="p-4 border-4 border-primary bg-white/95 shadow-2xl rounded-3xl overflow-hidden">
-              <div className="relative rounded-2xl overflow-hidden mb-4 border-2 border-primary/20">
-                <img src={capturedImage} alt="Captured Selfie" className="w-full h-auto" />
+            <div className="glass-panel p-6 rounded-[2rem] shadow-2xl border border-white/20">
+              <div className="relative rounded-2xl overflow-hidden mb-6 border-2 border-white/20 shadow-inner">
+                <img src={capturedImage!} alt="Captured Selfie" className="w-full h-auto" />
+                <div className="absolute bottom-2 right-2 bg-black/60 px-2 py-1 rounded text-[10px] text-white font-mono">
+                  vibes_captured.png
+                </div>
               </div>
 
-              <div className="flex flex-col gap-3">
-                <PlayfulButton onClick={downloadPhoto} className="w-full flex gap-2 items-center justify-center bg-gradient-to-r from-pink-500 to-purple-500 text-white">
-                  <Download size={20} /> Save Photo
+              <div className="flex flex-col gap-4">
+                <PlayfulButton onClick={downloadPhoto} className="w-full flex gap-2 items-center justify-center bg-gradient-to-r from-primary to-accent text-black font-bold border-none">
+                  <Download size={20} /> SAVE RECEIPT
                 </PlayfulButton>
 
-                <div className="flex gap-3">
-                  <PlayfulButton onClick={retakePhoto} variant="secondary" className="flex-1 flex gap-2 items-center justify-center text-sm">
-                    <RefreshCw size={16} /> Retake
+                <div className="flex gap-4">
+                  <PlayfulButton onClick={retakePhoto} variant="secondary" className="flex-1 flex gap-2 items-center justify-center text-sm bg-white/5 border-white/10 text-white hover:bg-white/10">
+                    <RefreshCw size={16} /> RETAKE
                   </PlayfulButton>
-                  <PlayfulButton onClick={handleNativeShare} variant="secondary" className="flex-1 flex gap-2 items-center justify-center text-sm">
-                    <Share2 size={16} /> Share
+                  <PlayfulButton onClick={handleNativeShare} variant="secondary" className="flex-1 flex gap-2 items-center justify-center text-sm bg-white/5 border-white/10 text-white hover:bg-white/10">
+                    <Share2 size={16} /> POST
                   </PlayfulButton>
                 </div>
 
                 <button
                   onClick={() => setCapturedImage(null)}
-                  className="text-muted-foreground underline text-sm mt-2"
+                  className="text-muted-foreground hover:text-white transition-colors text-sm mt-2 font-mono"
                 >
-                  Back to Celebration
+                  {'< BACK_TO_BASE'}
                 </button>
               </div>
-            </Card>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
