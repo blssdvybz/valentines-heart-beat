@@ -58,9 +58,21 @@ export default function EndScreen({ playerName }: EndScreenProps) {
 
     const initCamera = async () => {
       if (isCameraOpen && !streamRef.current) {
+        // Additional check for mediaDevices support
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          alert("Camera API not supported on this browser/device.");
+          setIsCameraOpen(false);
+          return;
+        }
+
         try {
           const stream = await navigator.mediaDevices.getUserMedia({
-            video: { facingMode: "user" }
+            video: {
+              facingMode: "user",
+              width: { ideal: 1280 },
+              height: { ideal: 720 }
+            },
+            audio: false
           });
 
           if (!mounted) {
@@ -71,10 +83,22 @@ export default function EndScreen({ playerName }: EndScreenProps) {
           streamRef.current = stream;
           if (videoRef.current) {
             videoRef.current.srcObject = stream;
+            // Explicitly play to satisfy some mobile browser policies
+            videoRef.current.onloadedmetadata = () => {
+              videoRef.current?.play().catch(e => console.error("Video play error:", e));
+            };
           }
-        } catch (err) {
+        } catch (err: any) {
           console.error("Error accessing camera:", err);
-          alert("Unable to access camera. Please allow camera permissions.");
+          let msg = "Unable to access camera.";
+          if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+            msg = "Camera permission denied. Please allow access in your browser settings.";
+          } else if (err.name === 'NotFoundError') {
+            msg = "No camera found on this device.";
+          } else if (err.name === 'NotReadableError') {
+            msg = "Camera is already in use by another application.";
+          }
+          alert(`Camera Error: ${msg} (${err.name}: ${err.message})`);
           if (mounted) setIsCameraOpen(false);
         }
       }
