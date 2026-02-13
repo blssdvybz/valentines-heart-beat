@@ -52,21 +52,43 @@ export default function EndScreen({ playerName }: EndScreenProps) {
     };
   }, []);
 
-  const startCamera = async () => {
-    try {
-      setIsCameraOpen(true);
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "user" }
-      });
-      streamRef.current = stream;
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
+  // Initialize camera when the modal opens
+  useEffect(() => {
+    let mounted = true;
+
+    const initCamera = async () => {
+      if (isCameraOpen && !streamRef.current) {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: "user" }
+          });
+
+          if (!mounted) {
+            stream.getTracks().forEach(track => track.stop());
+            return;
+          }
+
+          streamRef.current = stream;
+          if (videoRef.current) {
+            videoRef.current.srcObject = stream;
+          }
+        } catch (err) {
+          console.error("Error accessing camera:", err);
+          alert("Unable to access camera. Please allow camera permissions.");
+          if (mounted) setIsCameraOpen(false);
+        }
       }
-    } catch (err) {
-      console.error("Error accessing camera:", err);
-      alert("Unable to access camera. Please allow camera permissions.");
-      setIsCameraOpen(false);
-    }
+    };
+
+    initCamera();
+
+    return () => {
+      mounted = false;
+    };
+  }, [isCameraOpen]);
+
+  const startCamera = () => {
+    setIsCameraOpen(true);
   };
 
   const stopCamera = () => {
@@ -150,6 +172,8 @@ export default function EndScreen({ playerName }: EndScreenProps) {
 
   const retakePhoto = () => {
     setCapturedImage(null);
+    // Determine if we need to explicitly start camera or if removing capturedImage is enough
+    // Since we want to go back to camera mode:
     startCamera();
   };
 
