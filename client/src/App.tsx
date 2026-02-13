@@ -52,9 +52,27 @@ function GameApp() {
   }, []);
 
   useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!audioRef.current || screen === 'name') return;
+
+      if (document.hidden) {
+        audioRef.current.pause();
+      } else {
+        audioRef.current.play().catch(console.error);
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [screen]);
+
+  useEffect(() => {
     if (screen !== 'name' && audioRef.current) {
       const audio = audioRef.current;
-      if (audio.paused) {
+      if (audio.paused && !document.hidden) {
         const playPromise = audio.play();
         if (playPromise !== undefined) {
           playPromise.catch(error => {

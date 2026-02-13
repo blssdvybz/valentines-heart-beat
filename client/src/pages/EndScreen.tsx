@@ -120,7 +120,14 @@ export default function EndScreen({ playerName }: EndScreenProps) {
         ctx.shadowOffsetX = 2;
         ctx.shadowOffsetY = 2;
 
-        ctx.fillText("Cheers! Happy Valentine's to me! 💪❤️", canvas.width / 2, canvas.height - 50);
+        // Draw text in two lines to prevent overflow
+        const textLine1 = "Cheers! Happy Valentine's";
+        const textLine2 = "to me! 💪❤️";
+        const lineHeight = 35;
+        const textBottomMargin = 50;
+
+        ctx.fillText(textLine1, canvas.width / 2, canvas.height - textBottomMargin - lineHeight);
+        ctx.fillText(textLine2, canvas.width / 2, canvas.height - textBottomMargin);
 
         // Save image
         const dataUrl = canvas.toDataURL('image/png');
@@ -146,7 +153,7 @@ export default function EndScreen({ playerName }: EndScreenProps) {
     startCamera();
   };
 
-  const shareText = `I just built hearts with ${playerName}! 💖 We build better together 💪 Check it out!`;
+  const shareText = `I ${playerName}!, just had my Valentine's Heart Beat - 2026! 💖 💪 Check it out!`;
   const shareUrl = window.location.href;
 
   const handleWhatsAppShare = () => {
