@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Switch, Route } from "wouter";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -39,11 +39,38 @@ function GameApp() {
     setScreen('end');
   };
 
+  // Background music effect
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    // Initialize audio object once
+    if (!audioRef.current) {
+      audioRef.current = new Audio(import.meta.env.BASE_URL + "audio/My Love By Westlife.mp3");
+      audioRef.current.loop = true;
+      audioRef.current.volume = 0.5;
+    }
+  }, []);
+
+  useEffect(() => {
+    if (screen !== 'name' && audioRef.current) {
+      const audio = audioRef.current;
+      if (audio.paused) {
+        const playPromise = audio.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(error => {
+            console.log("Audio playback failed:", error);
+          });
+        }
+      }
+    }
+  }, [screen]);
+
+
   return (
     <div className="w-full h-screen overflow-hidden bg-background font-body text-foreground">
       <AnimatePresence mode="wait">
         {screen === 'name' && (
-          <motion.div 
+          <motion.div
             key="name"
             className="w-full h-full absolute inset-0"
             exit={{ x: -1000, opacity: 0 }}
@@ -54,7 +81,7 @@ function GameApp() {
         )}
 
         {screen === 'proposal' && (
-          <motion.div 
+          <motion.div
             key="proposal"
             className="w-full h-full absolute inset-0"
             initial={{ x: 1000, opacity: 0 }}
@@ -67,7 +94,7 @@ function GameApp() {
         )}
 
         {screen === 'game' && (
-          <motion.div 
+          <motion.div
             key="game"
             className="w-full h-full absolute inset-0"
             initial={{ opacity: 0 }}
@@ -80,7 +107,7 @@ function GameApp() {
         )}
 
         {screen === 'end' && (
-          <motion.div 
+          <motion.div
             key="end"
             className="w-full h-full absolute inset-0"
             initial={{ scale: 0.5, opacity: 0 }}
