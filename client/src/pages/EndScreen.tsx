@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import { PlayfulButton } from "@/components/PlayfulButton";
@@ -52,16 +52,35 @@ export default function EndScreen({ playerName }: EndScreenProps) {
     };
   }, []);
 
-  // Initialize camera when the modal opens
+  // Camera Logic Refactored for Robustness
+  const startCamera = useCallback(async () => {
+    if (isCameraOpen) return;
+    setIsCameraOpen(true);
+  }, [isCameraOpen]);
+
+  const stopCamera = useCallback(() => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => {
+        track.stop();
+      });
+      streamRef.current = null;
+    }
+    if (videoRef.current) {
+      videoRef.current.srcObject = null;
+    }
+    setIsCameraOpen(false);
+  }, []);
+
+  // Effect to handle camera stream when isCameraOpen changes
   useEffect(() => {
     let mounted = true;
 
-    const initCamera = async () => {
+    const initStream = async () => {
       if (isCameraOpen && !streamRef.current) {
         // Additional check for mediaDevices support
         if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
           alert("Camera API not supported on this browser/device.");
-          setIsCameraOpen(false);
+          if (mounted) setIsCameraOpen(false);
           return;
         }
 
@@ -104,24 +123,24 @@ export default function EndScreen({ playerName }: EndScreenProps) {
       }
     };
 
-    initCamera();
+    if (isCameraOpen) {
+      initStream();
+    } else {
+      // Cleanup if closed
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+        streamRef.current = null;
+      }
+    }
 
     return () => {
       mounted = false;
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+        // Don't nullify ref here if we want to potentially keep it, but generally good to stop
+      }
     };
   }, [isCameraOpen]);
-
-  const startCamera = () => {
-    setIsCameraOpen(true);
-  };
-
-  const stopCamera = () => {
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach(track => track.stop());
-      streamRef.current = null;
-    }
-    setIsCameraOpen(false);
-  };
 
   const capturePhoto = () => {
     if (videoRef.current && canvasRef.current) {
