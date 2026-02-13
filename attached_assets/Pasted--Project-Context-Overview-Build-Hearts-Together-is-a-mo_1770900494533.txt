@@ -1,6 +1,6 @@
 ### Project Context Overview
 
-"Build Hearts Together 💪❤️" is a **mobile-first, single-page web application** designed as a fun, platonic Valentine's Day surprise for your construction team (especially the Gen Z ladies). It merges a persistent "dodging No button" proposal game with a heart-catching mini-game, all wrapped in cute construction-themed puns and visuals.
+"Valentine's Heart Beat 💪❤️" is a **mobile-first, single-page web application** designed as a fun, platonic Valentine's Day surprise for your construction team (especially the Gen Z ladies). It merges a persistent "dodging No button" proposal game with a heart-catching mini-game, all wrapped in cute construction-themed puns and visuals.
 
 The tone is empowering, playful, and team-focused: **"We build better together 💪❤️"**. It's fully shareable—one link works for anyone worldwide (they enter their own name). Players end on a selfie-ready screen to screenshot and post, driving viral spread on WhatsApp, TikTok, Stories, etc.
 
@@ -22,8 +22,8 @@ Create a quick (1-3 min), adorable, interactive Valentine's web game for team ap
 - Secondary: Desktop (works but optimized for touch)
 
 #### 3. Core Features
-- **Name Entry**: Input field (default: "Awesome Builder")
-- **Persistent Button Screen**: Cute character asks "[Name]! Will you build hearts with me this Valentine's? 💖 We build better together 💪❤️"
+- **Name Entry**: Input field (default: "Enter your name")
+- **Persistent Button Screen**: Cute character asks "[Name]! Will you be my work Valentine? 💖 We build better together 💪❤️"
   - Large "YES 💪" + dodging/shrinking "NO" button
   - 6-8 punny rejection messages with name
   - Auto-advance after ~6 "NO"s
@@ -62,7 +62,7 @@ Copy-paste this entire code into a file named `index.html`. Host your character 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Build Hearts Together 💪❤️</title>
+  <title>Valentine's Heart Beat 💪❤️</title>
   <style>
     body { margin: 0; font-family: 'Comic Sans MS', cursive, sans-serif; background: #ffebee; overflow: hidden; touch-action: manipulation; }
     .screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; box-sizing: border-box; display: none; }
@@ -82,7 +82,7 @@ Copy-paste this entire code into a file named `index.html`. Host your character 
 <body>
   <!-- Name Screen -->
   <div id="nameScreen" class="screen active">
-    <h1>Build Hearts Together 💪❤️</h1>
+    <h1>Valentine's Heart Beat 💪❤️</h1>
     <p>Enter your name to start!</p>
     <input type="text" id="nameInput" placeholder="Your name (e.g. Awesome Builder)" style="padding:10px; font-size:18px; width:80%; max-width:300px;">
     <button onclick="startGame()">Play 💖</button>
@@ -119,7 +119,7 @@ Copy-paste this entire code into a file named `index.html`. Host your character 
   <script>
     "use strict";
 
-    let playerName = "Awesome Builder";
+    let playerName = "Enter your name";
     let noCount = 0;
     const maxNo = 6;
     const rejections = [
@@ -147,7 +147,7 @@ Copy-paste this entire code into a file named `index.html`. Host your character 
       playerName = document.getElementById('nameInput').value.trim() || "Awesome Builder";
       document.getElementById('character').src = characterSrc;
       document.getElementById('characterEnd').src = characterSrc;
-      document.getElementById('proposalText').innerHTML = `${playerName}! Will you build hearts with me this Valentine's? 💖<br>We build better together 💪❤️`;
+      document.getElementById('proposalText').innerHTML = `${playerName}! Will you be my work Valentine? 💖<br>We build better together 💪❤️`;
       showScreen('buttonScreen');
     }
 
@@ -253,7 +253,7 @@ Copy-paste this entire code into a file named `index.html`. Host your character 
 
     function shareGeneral() {
       if (navigator.share) {
-        navigator.share({ title: 'Build Hearts Together', text: 'Play this cute Valentine game!', url: window.location.href });
+        navigator.share({ title: 'Valentine's Heart Beat', text: 'Play this cute Valentine game!', url: window.location.href });
       } else {
         alert('Copy this link to share: ' + window.location.href);
       }

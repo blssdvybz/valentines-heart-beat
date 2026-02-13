@@ -8,6 +8,7 @@ export interface IStorage {
 
 export class DatabaseStorage implements IStorage {
   async createSession(insertSession: InsertGameSession): Promise<GameSession> {
+    // @ts-ignore
     const [session] = await db
       .insert(game_sessions)
       .values(insertSession)
@@ -16,4 +17,26 @@ export class DatabaseStorage implements IStorage {
   }
 }
 
-export const storage = new DatabaseStorage();
+export class MemStorage implements IStorage {
+  private sessions: Map<number, GameSession>;
+  private currentId: number;
+
+  constructor() {
+    this.sessions = new Map();
+    this.currentId = 1;
+  }
+
+  async createSession(insertSession: InsertGameSession): Promise<GameSession> {
+    const id = this.currentId++;
+    const session: GameSession = {
+      ...insertSession,
+      id,
+      completedAt: new Date(),
+      score: insertSession.score ?? 0
+    };
+    this.sessions.set(id, session);
+    return session;
+  }
+}
+
+export const storage = process.env.DATABASE_URL ? new DatabaseStorage() : new MemStorage();

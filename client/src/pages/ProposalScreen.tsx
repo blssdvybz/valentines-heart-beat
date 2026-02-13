@@ -49,11 +49,11 @@ export default function ProposalScreen({ playerName, onAccept }: ProposalScreenP
         className="w-full max-w-2xl text-center z-10"
       >
         <Card className="p-8 border-4 border-secondary/20 bg-white/90 backdrop-blur-md shadow-2xl rounded-3xl">
-          <motion.img 
-            src={workerImg} 
+          <motion.img
+            src={workerImg}
             alt="Worker asking"
             className="w-40 h-40 mx-auto mb-6 object-contain"
-            animate={{ 
+            animate={{
               rotate: [0, 5, 0, -5, 0],
               scale: [1, 1.05, 1]
             }}
@@ -61,7 +61,7 @@ export default function ProposalScreen({ playerName, onAccept }: ProposalScreenP
           />
 
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8 leading-relaxed">
-            <span className="text-primary">{playerName}!</span> Will you build hearts with me this Valentine's? 💖
+            <span className="text-primary">{playerName}!</span> Will you be my work Valentine? 💖
             <br />
             <span className="text-xl md:text-2xl text-muted-foreground block mt-2 font-body">
               We build better together 💪❤️
@@ -73,9 +73,9 @@ export default function ProposalScreen({ playerName, onAccept }: ProposalScreenP
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
             >
-              <PlayfulButton 
-                onClick={onAccept} 
-                size="lg" 
+              <PlayfulButton
+                onClick={onAccept}
+                size="lg"
                 className="min-w-[140px] text-2xl"
               >
                 YES 💪
@@ -84,8 +84,8 @@ export default function ProposalScreen({ playerName, onAccept }: ProposalScreenP
 
             <AnimatePresence>
               <motion.div
-                animate={{ 
-                  x: noPosition.x, 
+                animate={{
+                  x: noPosition.x,
                   y: noPosition.y,
                   scale: Math.max(0.5, 1 - noCount * 0.1) // Shrink with each click
                 }}
@@ -93,7 +93,7 @@ export default function ProposalScreen({ playerName, onAccept }: ProposalScreenP
                 className="absolute"
                 style={{ left: "50%", marginLeft: "20px" }} // Initial offset to right of YES button
               >
-                <PlayfulButton 
+                <PlayfulButton
                   variant="secondary"
                   size="lg"
                   className="min-w-[140px]"

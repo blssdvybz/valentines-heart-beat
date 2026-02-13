@@ -45,7 +45,7 @@ function GameApp() {
   useEffect(() => {
     // Initialize audio object once
     if (!audioRef.current) {
-      audioRef.current = new Audio(import.meta.env.BASE_URL + "audio/My Love By Westlife.mp3");
+      audioRef.current = new Audio(import.meta.env.BASE_URL + "audio/My%20Love%20By%20Westlife.mp3");
       audioRef.current.loop = true;
       audioRef.current.volume = 0.5;
     }

@@ -1,20 +1,21 @@
 import { motion, HTMLMotionProps } from "framer-motion";
-import { cn } from "@/lib/utils";
+import { cn, vibrate, HAPTIC } from "@/lib/utils";
 
 interface PlayfulButtonProps extends HTMLMotionProps<"button"> {
   variant?: "primary" | "secondary" | "danger";
   size?: "sm" | "md" | "lg";
 }
 
-export function PlayfulButton({ 
-  children, 
-  className, 
-  variant = "primary", 
+export function PlayfulButton({
+  children,
+  className,
+  variant = "primary",
   size = "md",
-  ...props 
+  onClick,
+  ...props
 }: PlayfulButtonProps) {
   const baseStyles = "relative font-bold rounded-2xl shadow-lg transition-colors border-b-4 active:border-b-0 active:translate-y-1";
-  
+
   const variants = {
     primary: "bg-primary text-primary-foreground border-primary/50 hover:bg-primary/90 hover:shadow-primary/30",
     secondary: "bg-secondary text-secondary-foreground border-secondary/50 hover:bg-secondary/90 hover:shadow-secondary/30",
@@ -27,11 +28,17 @@ export function PlayfulButton({
     lg: "px-10 py-5 text-2xl",
   };
 
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    vibrate(HAPTIC.TAP);
+    onClick?.(e);
+  };
+
   return (
     <motion.button
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
       className={cn(baseStyles, variants[variant], sizes[size], "font-display tracking-wider", className)}
+      onClick={handleClick}
       {...props}
     >
       {children}

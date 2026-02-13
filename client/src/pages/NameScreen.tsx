@@ -11,7 +11,7 @@ interface NameScreenProps {
 }
 
 export default function NameScreen({ onNext }: NameScreenProps) {
-  const [name, setName] = useState("Awesome Builder");
+  const [name, setName] = useState("Enter your name");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,17 +29,17 @@ export default function NameScreen({ onNext }: NameScreenProps) {
         className="w-full max-w-md"
       >
         <Card className="p-8 border-4 border-primary/20 bg-white/80 backdrop-blur-sm shadow-xl rounded-3xl overflow-visible relative">
-          
+
           {/* Decorative floating icons */}
-          <motion.div 
-            animate={{ y: [0, -10, 0] }} 
+          <motion.div
+            animate={{ y: [0, -10, 0] }}
             transition={{ repeat: Infinity, duration: 2 }}
             className="absolute -top-6 -right-6 text-secondary transform rotate-12"
           >
             <Hammer size={48} fill="currentColor" />
           </motion.div>
-          <motion.div 
-            animate={{ y: [0, -10, 0] }} 
+          <motion.div
+            animate={{ y: [0, -10, 0] }}
             transition={{ repeat: Infinity, duration: 2.5, delay: 0.5 }}
             className="absolute -top-6 -left-6 text-primary transform -rotate-12"
           >
@@ -48,15 +48,15 @@ export default function NameScreen({ onNext }: NameScreenProps) {
 
           <div className="text-center space-y-6">
             <div className="relative inline-block">
-              <img 
-                src={workerImg} 
-                alt="Construction Worker" 
+              <img
+                src={workerImg}
+                alt="Construction Worker"
                 className="w-32 h-32 mx-auto object-contain drop-shadow-lg"
               />
             </div>
 
             <h1 className="text-4xl md:text-5xl font-bold text-primary leading-tight">
-              Build Hearts Together <span className="text-secondary">💪❤️</span>
+              Valentine's Heart Beat <span className="text-secondary">💪❤️</span>
             </h1>
 
             <form onSubmit={handleSubmit} className="space-y-6">

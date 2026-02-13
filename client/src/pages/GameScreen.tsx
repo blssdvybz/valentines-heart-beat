@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import workerImg from "@assets/worker-image_1770900515921.png";
+import { vibrate, HAPTIC } from "@/lib/utils";
 
 interface GameScreenProps {
   playerName: string;
@@ -9,7 +10,7 @@ interface GameScreenProps {
 
 // Game Constants
 const GOAL_SCORE = 25;
-const GRAVITY = 4; // Falling speed
+const GRAVITY = 2.5; // Falling speed
 const SPAWN_RATE = 0.03; // Chance per frame
 const HOOK_WIDTH = 80;
 const HOOK_HEIGHT = 80;
@@ -32,7 +33,7 @@ export default function GameScreen({ playerName, onFinish }: GameScreenProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [score, setScore] = useState(0);
   const [feedback, setFeedback] = useState<string | null>(null);
-  
+
   // Refs for game state to avoid closure staleness in loop
   const gameState = useRef({
     score: 0,
@@ -60,7 +61,7 @@ export default function GameScreen({ playerName, onFinish }: GameScreenProps) {
       if (!canvasRef.current) return;
       const rect = canvasRef.current.getBoundingClientRect();
       const relativeX = x - rect.left;
-      gameState.current.hookX = Math.max(HOOK_WIDTH/2, Math.min(canvasRef.current.width - HOOK_WIDTH/2, relativeX));
+      gameState.current.hookX = Math.max(HOOK_WIDTH / 2, Math.min(canvasRef.current.width - HOOK_WIDTH / 2, relativeX));
     };
 
     const handleTouch = (e: TouchEvent) => handleMove(e.touches[0].clientX);
@@ -96,7 +97,7 @@ export default function GameScreen({ playerName, onFinish }: GameScreenProps) {
       if (!gameState.current.isPlaying) return;
 
       const state = gameState.current;
-      
+
       // Clear
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -114,7 +115,7 @@ export default function GameScreen({ playerName, onFinish }: GameScreenProps) {
       // Update and Draw Items
       state.items.forEach(item => {
         if (item.caught) return;
-        
+
         item.y += GRAVITY;
 
         // Draw item
@@ -122,28 +123,35 @@ export default function GameScreen({ playerName, onFinish }: GameScreenProps) {
         // Circular clipping for neatness
         ctx.save();
         ctx.beginPath();
-        ctx.arc(item.x + ITEM_SIZE/2, item.y + ITEM_SIZE/2, ITEM_SIZE/2, 0, Math.PI * 2);
+        ctx.arc(item.x + ITEM_SIZE / 2, item.y + ITEM_SIZE / 2, ITEM_SIZE / 2, 0, Math.PI * 2);
         ctx.clip();
         ctx.drawImage(img, item.x, item.y, ITEM_SIZE, ITEM_SIZE);
         ctx.restore();
 
         // Collision Logic
         const hookY = canvas.height - HOOK_HEIGHT - 20;
-        const distX = Math.abs((item.x + ITEM_SIZE/2) - state.hookX);
-        const distY = Math.abs((item.y + ITEM_SIZE/2) - (hookY + HOOK_HEIGHT/2));
+        const distX = Math.abs((item.x + ITEM_SIZE / 2) - state.hookX);
+        const distY = Math.abs((item.y + ITEM_SIZE / 2) - (hookY + HOOK_HEIGHT / 2));
 
-        if (distX < (HOOK_WIDTH/2 + ITEM_SIZE/2 - 10) && distY < (HOOK_HEIGHT/2 + ITEM_SIZE/2 - 10)) {
+        if (distX < (HOOK_WIDTH / 2 + ITEM_SIZE / 2 - 10) && distY < (HOOK_HEIGHT / 2 + ITEM_SIZE / 2 - 10)) {
           item.caught = true;
-          
+
           if (item.type === "heart") {
             state.score += 1;
             setScore(state.score);
+            vibrate(HAPTIC.SUCCESS);
+
             if (state.score >= GOAL_SCORE) {
               state.isPlaying = false;
               onFinish(state.score);
             }
           } else {
-            setFeedback("Oops, that's a tool! 🔨");
+            // Decrease score but min 0
+            state.score = Math.max(0, state.score - 1);
+            setScore(state.score);
+
+            setFeedback("Oops, that's a tool! 🔨 (-1 ❤️)");
+            vibrate(HAPTIC.FAILURE);
             setTimeout(() => setFeedback(null), 1500);
           }
         }
@@ -154,7 +162,7 @@ export default function GameScreen({ playerName, onFinish }: GameScreenProps) {
 
       // Draw Hook
       const hookY = canvas.height - HOOK_HEIGHT - 20;
-      ctx.drawImage(state.assets.hook, state.hookX - HOOK_WIDTH/2, hookY, HOOK_WIDTH, HOOK_HEIGHT);
+      ctx.drawImage(state.assets.hook, state.hookX - HOOK_WIDTH / 2, hookY, HOOK_WIDTH, HOOK_HEIGHT);
 
       animationFrameId = requestAnimationFrame(loop);
     };
@@ -170,7 +178,7 @@ export default function GameScreen({ playerName, onFinish }: GameScreenProps) {
   return (
     <div className="fixed inset-0 overflow-hidden bg-gradient-to-b from-sky-100 to-white game-container cursor-none">
       <canvas ref={canvasRef} className="block w-full h-full" />
-      
+
       {/* HUD */}
       <div className="absolute top-4 left-0 right-0 px-4 flex justify-between items-start pointer-events-none">
         <div className="flex items-center gap-3">
@@ -190,7 +198,7 @@ export default function GameScreen({ playerName, onFinish }: GameScreenProps) {
 
       {/* Feedback Toast */}
       {feedback && (
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0 }}
